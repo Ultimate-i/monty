@@ -1,28 +1,24 @@
 #include "monty.h"
 
+globals_t globals;
 
 /**
- * main - Monty 0.98 interpreter.
- * @argc: count of the input arguments from terminal.
- * @argv: array of strings holding the input arguments.
+ * main - entry point to monty program.
+ * @argc: numbers of arguments.
+ * @argv: pointer to an array of string.
  *
- * Return: EXIT_SUCCESS on success, EXIT_FAILURE if failed.
+ * Return: EXIT_SUCCESS.
  */
-
-
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	if (argc != 2)
-	{
-		fprintf(stderr, "USAGE: monty file\n");
-		exit(EXIT_FAILURE);
-	}
-	if (access(argv[1], F_OK | R_OK) != 0)
-	{
-		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-		exit(EXIT_FAILURE);
-	}
-	read_monty(argv[1]);
+	stack_t *stack;
 
+	stack = NULL;
+	parse_arg(argc, argv);
+	read_line(&stack);
+
+	free(globals.lineptr);
+	free_stack(stack);
+	fclose(globals.fp);
 	return (EXIT_SUCCESS);
 }
