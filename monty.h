@@ -1,25 +1,15 @@
-#ifndef MONTY_H
-#define MONTY_H
+#ifndef __MONTY_H__
+#define __MONTY_H__
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-/**
- * struct globals_s - struct contains global variables.
- * @data: value to initialize nodes.
- * @fp: a file pointer.
- * @lineptr: pointer to a dynamic buffer.
- * @token: a pointer to the next token.
-*/
-typedef struct globals_s
-{
-	int data;
-	FILE *fp;
-	char *lineptr, *token;
-} globals_t;
+#include <sys/stat.h>
 
-extern globals_t globals;
-
+/*==========================================================================*/
+/*==========================     DATA STRUCTURES    ========================*/
+/*==========================================================================*/
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
@@ -50,36 +40,52 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-/* opfunct1 */
-void push(stack_t **stack, unsigned int line_number);
-void pall(stack_t **stack, unsigned int line_number);
-void free_stack(stack_t *stack);
-void pint(stack_t **stack, unsigned int line_number);
-void pop(stack_t **stack, unsigned int line_number);
+/*=========================================================================*/
+/*=========================   OPCODE FUNCTIONS  ===========================*/
+/*=========================================================================*/
 
-/* opfunct2 */
-void swap(stack_t **stack, unsigned int line_number);
-void add(stack_t **stack, unsigned int line_number);
-void nop(stack_t **stack, unsigned int line_number);
-void sub(stack_t **stack, unsigned int line_number);
-void divide(stack_t **stack, unsigned int line_number);
+/* monty_main.c */
+int main(int ac, char **av);
 
-/* opfunct3 */
-void mul(stack_t **stack, unsigned int line_number);
-void mod(stack_t **stack, unsigned int line_number);
-void pchar(stack_t **stack, unsigned int line_number);
-void pstr(stack_t **stack, unsigned int line_number);
-void rotl(stack_t **stack, unsigned int line_number);
+/* monty_free.c */
+void free_stack(stack_t **stack);
 
-/* opfunct4 */
-void rotr(stack_t **stack, unsigned int line_number);
-void push_q(stack_t **stack, unsigned int line_number);
+/* monty_run.c */
+int monty_run(FILE *fd);
+char **tokening(char *line, char *delim);
+int empty_line(char *line, char *delims);
 
-/* monty_check */
-void error_handle(stack_t **stack, unsigned int line_number, int error_type);
-void check_op(stack_t **stack, unsigned int line_number);
-void parse_arg(int argc, char *argv[]);
-void read_line(stack_t **stack);
-void parse_num(stack_t **stack, unsigned int line_number);
+/* monty_exec.c */
+int execute(char **token, stack_t **stack, unsigned int line_num);
+int monty_push(stack_t **stack, char **token, unsigned int line_num);
+int monty_pushq(stack_t **stack, char **token, unsigned int line_num);
+void monty_pall(stack_t **stack, unsigned int line_num);
 
-#endif /* MONTY_H */
+/* monty_pool1.c */
+void monty_pint(stack_t **stack, unsigned int line_num);
+void monty_pop(stack_t **stack, unsigned int line_num);
+void monty_swap(stack_t **stack, unsigned int line_num);
+void monty_sub(stack_t **stack, unsigned int line_num);
+void monty_add(stack_t **stack, unsigned int line_num);
+
+/* monty_pool2.c */
+void monty_mul(stack_t **stack, unsigned int line_number);
+void monty_div(stack_t **stack, unsigned int line_number);
+void monty_mod(stack_t **stack, unsigned int line_number);
+void monty_pchar(stack_t **stack, unsigned int line_number);
+void monty_pstr(stack_t **stack, unsigned int line_number);
+
+/* monty_pool3.c */
+void monty_rotl(stack_t **stack, unsigned int line_number);
+void monty_rotr(stack_t **stack, unsigned int line_number);
+
+/*=========================================================================*/
+/*=========================        ERRORS       ===========================*/
+/*=========================================================================*/
+
+/* monty_errors.c */
+int usage_error(int flag);
+int open_error(char *filename);
+int f_errors(int flag, unsigned int line_num);
+
+#endif /* __MONTY_H__ */
